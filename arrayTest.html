@@ -1,29 +1,63 @@
 <!DOCTYPE html>
-<header>
-</header>
-<script src="numbers.js"></script>
-<script src="orders.js"></script>
-<script>
-    phoneNumbers.forEach(function(res) {
-        collectionInfo(res)
-    })
+<html>
+  <header>
+    <script
+      type="text/javascript"
+      src="http://cdn.jsdelivr.net/npm/ramda@0.26.0/dist/ramda.min.js"
+    ></script>
+  </header>
+  <script src="numbers.js"></script>
+  <script src="orders.js"></script>
+  <script src="customerExport.js"></script>
+  <script>
+    ///////
+    //Group the transaction dates together by cross referencing the phone numbers from numbers.js with the phone numbers from the transactionData
+    ///////
+    const groupNames = (acc, { date }) => acc.concat(date);
 
-function collectionInfo(number) {
-    let visits = [];
-    let newObj;
-    let name;
-    transactionData.forEach(function(res){
-        if (res.phone == number){
-            name = res.name;
-            visits.push(res.date);
-        }
-        newObj = {
-            name: name,
-            phone: number,
-            visits: visits
-        }
-    });
-    console.log(newObj)
-};
-</script>
+    const makeGroup = ({ phone }) =>
+      R.includes(phone, phoneNumbers) ? `${phone}` : 'FAKE';
+
+    var compiledTransactions = R.reduceBy(
+      groupNames,
+      [],
+      makeGroup,
+      transactionData,
+    );
+    /////////
+    //Match the customers from the customerExport with the grouped transactions using phone number - the [key] is the phone number from the compiledTransactions. 
+    ////
+    const acc = [];
+    const matchCustomer = (value, key, obj) => {
+      let custo = R.pick([key], customerExport);
+      let updatedCusto = R.merge(custo, { visits: value });
+      acc.push(updatedCusto);
+    };
+
+    R.mapObjIndexed(matchCustomer, compiledTransactions);
+
+    console.log(acc);
+    // var customerExport = '//customerExport.json';
+    // phoneNumbers.forEach(function(res) {
+    //   collectionInfo(res)
+    // })
+    //
+    // function collectionInfo(number) {
+    //   let visits = [];
+    //   let newObj;
+    //   let name;
+    // transactionData.forEach(function(res){
+    //   if (res.phone == number){
+    //     name = res.name;
+    //     visits.push(res.date);
+    //   }
+    //   newObj = {
+    //     name: name,
+    //     phone: number,
+    //     visits: visits
+    //   }
+    // });
+    // console.log(newObj)
+    // };
+  </script>
 </html>
