@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<header>
+</header>
+<script src="numbers.js"></script>
+<script src="orders.js"></script>
+<script>
+    phoneNumbers.forEach(function(res) {
+        collectionInfo(res)
+    })
+
+function collectionInfo(number) {
+    let visits = [];
+    let newObj;
+    let name;
+    transactionData.forEach(function(res){
+        if (res.phone == number){
+            name = res.name;
+            visits.push(res.date);
+        }
+        newObj = {
+            name: name,
+            phone: number,
+            visits: visits
+        }
+    });
+    console.log(newObj)
+};
+</script>
+</html>
