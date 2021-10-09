@@ -1,29 +1,61 @@
 <!DOCTYPE html>
 <header>
+    <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-database.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="getCustomerAndTransactionData.js"></script>
 </header>
-<script src="numbers.js"></script>
-<script src="orders.js"></script>
-<script>
-    phoneNumbers.forEach(function(res) {
-        collectionInfo(res)
-    })
 
-function collectionInfo(number) {
-    let visits = [];
-    let newObj;
-    let name;
-    transactionData.forEach(function(res){
-        if (res.phone == number){
-            name = res.name;
-            visits.push(res.date);
-        }
-        newObj = {
-            name: name,
-            phone: number,
-            visits: visits
-        }
-    });
-    console.log(newObj)
-};
-</script>
+<body>
+
+    <script>
+        // Initialize global variables
+        let flattenedTransactionArray = [];
+        let updatedCustomerData;
+
+        // Wait for data from getNumbersTransactions.js
+        setTimeout(function () {
+            // Loop through customerInfo
+            customerInfo.forEach(function (customer) {
+                // Process each customer record
+                updatedCustomerData = createCombinedTransactionArray(customer);
+            })
+            // Print out final result
+            console.log(updatedCustomerData)
+        }, 3000);
+
+        // Create an array with the new objects from combined data
+        function createCombinedTransactionArray(customer) {
+            // Initialize variables for later
+            let visits = [];
+            let newObj;
+            let phone = customer[0];
+            let lastActiveDate = customer[1];
+            let lastActiveTime = customer[2];
+
+            // Loop through transactions
+            flattenedTransactions.forEach(function (transaction) {
+                // If current transaction matches the phone number, push it to visits array
+                if (transaction.phone == phone) {
+                    visits.push(transaction.date);
+                }
+                // Build an object combining customer and transaction data
+                newObj = {
+                    lastActiveDate: lastActiveDate,
+                    lastActiveTime: lastActiveTime,
+                    name: transaction.name,
+                    phone: phone,
+                    visits: visits,
+                    visitTotal: visits.length
+                }
+            });
+            // Push new object to flattenedTransactionArray
+            flattenedTransactionArray.push(newObj);
+            return flattenedTransactionArray;
+        };
+    </script>
+</body>
+
 </html>
