@@ -9,7 +9,7 @@
 </header>
 
 <body>
-
+    <pre id="output"></pre>
     <script>
         // Initialize global variables
         let flattenedTransactionArray = [];
@@ -24,6 +24,7 @@
             })
             // Print out final result
             console.log(updatedCustomerData)
+            $('#output').html(JSON.stringify(updatedCustomerData, null, 2))
         }, 3000);
 
         // Create an array with the new objects from combined data
@@ -31,7 +32,8 @@
             // Initialize variables for later
             let visits = [];
             let newObj;
-            let phone = customer[0];
+            let name = customer[0];
+            let phone = customer[1];
             let lastActiveDate = customer[1];
             let lastActiveTime = customer[2];
 
@@ -44,8 +46,7 @@
                 // Build an object combining customer and transaction data
                 newObj = {
                     lastActiveDate: lastActiveDate,
-                    lastActiveTime: lastActiveTime,
-                    name: transaction.name,
+                    name: name,
                     phone: phone,
                     visits: visits,
                     visitTotal: visits.length

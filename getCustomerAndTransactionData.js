@@ -25,7 +25,12 @@ const customerdbRef = firebase.database().ref('users/customers/bellsSweetFactory
 customerdbRef.on('value', function (snapshot) {
     // Push phone number data from Firebase into Array
     snapshot.forEach(function (childSnapshot) {
-        customerInfo.push([childSnapshot.val().phone, childSnapshot.val().lastActiveDate, childSnapshot.val().lastActiveTime]);
+        customerInfo.push([
+            childSnapshot.val().name, 
+            childSnapshot.val().phone, 
+            childSnapshot.val().lastActiveDate, 
+            childSnapshot.val().lastActiveTime
+        ]);
     });
 });
 
