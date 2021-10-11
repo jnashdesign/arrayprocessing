@@ -6,14 +6,56 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="getCustomerAndTransactionData.js"></script>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        td:first-child {
+            text-align: right;
+        }
+
+        pre {
+            background: #eee;
+            padding: 10px;
+            width: 50%;
+            max-height: 300px;
+            overflow: scroll;
+        }
+    </style>
 </header>
 
 <body>
+    <p>
+        <strong>General Data</strong><br>
+        <span id='uniqueCustomers'></span> total unique customers<br>
+        <span id='totalVisits'></span> Total visits<br>
+        <span id='averageVisits'></span> Average vists per customer
+    </p>
+    <p>
+        <strong>Customers By Visits</strong><br>
+        <span id="oneVisitCustomers"></span> &#8212; 1 visit<br>
+        <span id="twoVisitCustomers"></span> &#8212; 2 visits<br>
+        <span id="threeVisitCustomers"></span> &#8212; 3 visits<br>
+        <span id="fourVisitCustomers"></span> &#8212; 4 visits<br>
+        <span id="fiveOrMore"></span> &#8212; 5+ visits<br>
+        <span id="tenOrMore"></span> &#8212; 10+ visits
+    </p>
+    <span><strong>Output</strong></span>
     <pre id="output"></pre>
     <script>
         // Initialize global variables
         let flattenedTransactionArray = [];
         let updatedCustomerData;
+        let oneVisitCustomers = [];
+        let twoVisitCustomers = [];
+        let threeVisitCustomers = [];
+        let fourVisitCustomers = [];
+        let repeatCustomers = [];
+        let loyalCustomers = [];
+        let superLoyalCustomers = [];
+        let customerVisitTotal = 0;
+        let customerVisitAvg;
 
         // Wait for data from getNumbersTransactions.js
         setTimeout(function () {
@@ -23,8 +65,40 @@
                 updatedCustomerData = createCombinedTransactionArray(customer);
             })
             // Print out final result
-            console.log(updatedCustomerData)
-            $('#output').html(JSON.stringify(updatedCustomerData, null, 2))
+            // console.log(updatedCustomerData);
+            $('#output').html(JSON.stringify(updatedCustomerData, null, 2));
+
+            updatedCustomerData.forEach(function (res) {
+                customerVisitTotal = customerVisitTotal + res.visitTotal;
+                if (res.visitTotal == 1) {
+                    oneVisitCustomers.push(res);
+                }
+                if (res.visitTotal == 2) {
+                    twoVisitCustomers.push(res);
+                }
+                if (res.visitTotal == 3) {
+                    threeVisitCustomers.push(res);
+                }
+                if (res.visitTotal == 4) {
+                    fourVisitCustomers.push(res);
+                }
+                if (res.visitTotal >= 5) {
+                    loyalCustomers.push(res)
+                }
+                if (res.visitTotal >= 10) {
+                    superLoyalCustomers.push(res)
+                }
+            });
+            customerVisitAvg = customerVisitTotal / updatedCustomerData.length;
+            $('#uniqueCustomers').html(updatedCustomerData.length.toLocaleString("en-US"));
+            $('#totalVisits').html(customerVisitTotal.toLocaleString("en-US"));
+            $('#averageVisits').html(customerVisitAvg.toFixed(2));
+            $('#oneVisitCustomers').html(oneVisitCustomers.length.toLocaleString("en-US"));
+            $('#twoVisitCustomers').html(twoVisitCustomers.length.toLocaleString("en-US"));
+            $('#threeVisitCustomers').html(threeVisitCustomers.length.toLocaleString("en-US"));
+            $('#fourVisitCustomers').html(fourVisitCustomers.length.toLocaleString("en-US"));
+            $('#fiveOrMore').html(loyalCustomers.length.toLocaleString("en-US"));
+            $('#tenOrMore').html(superLoyalCustomers.length.toLocaleString("en-US"));
         }, 3000);
 
         // Create an array with the new objects from combined data
